@@ -1,9 +1,9 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_login import UserMixin
 
 db = SQLAlchemy()
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'users'  # Table name (optional)flask db migrate -m "Initial migration"
     id = db.Column(db.Integer(), primary_key=True)
     fullname = db.Column(db.String(50), nullable=False)

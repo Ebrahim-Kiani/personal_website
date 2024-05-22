@@ -1,7 +1,7 @@
 from datetime import datetime
 from getpass import getpass
 from password_strength import PasswordPolicy
-from flask import Flask, request, flash, render_template
+from flask import Flask, request, flash, render_template, redirect, url_for, g
 from flask_bcrypt import Bcrypt
 from home_module.home import home_bp
 from flask_migrate import Migrate
@@ -34,27 +34,35 @@ migrate = Migrate(app, db)
 
 # Define login here
 login = LoginManager(app)
-
+login.login_view = 'login'
+@app.before_request
+def before_request():
+    g.user = current_user
 
 @login.user_loader
 def load_user(user_id):
-    return User(user_id)
+    return User.query.get(int(user_id))
 
 
-@app.route("/admin/login", methods=['GET', 'POST'])
-def admin_login():
+@app.route("/login", methods=['GET', 'POST'])
+def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        user = User.get(email=email)
-        if user:
+      #  remember_me = True if request.form['remember_me'] else False
+        user = User.query.filter_by(email=email).first()
+        if user and user.is_active:
             hashed_password = user.password
             is_valid = bcrypt.check_password_hash(hashed_password, password)
-            if is_valid:
-                load_user(user)
+            if is_valid and user.is_admin:
+                login_user(user )
+                #g.user = current_user
                 flash('Logged in successfully!', 'success')
+                print('logged in')
+                return redirect(url_for('admin.index'))
 
         else:
+            print('not login')
             flash('Invalid credentials', 'danger')
     return render_template('login.html')
 
@@ -117,11 +125,13 @@ def create_admin():
 # Set Admin session
 class MyModelView(ModelView):
     def is_accessible(self):
-        return current_user.is_authenticated
+        print(current_user.is_authenticated)
+        return current_user.is_authenticated and current_user.is_admin
 
 
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
+        print(current_user.is_authenticated)
         return current_user.is_authenticated and current_user.is_admin
 
 
