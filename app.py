@@ -1,9 +1,8 @@
-from datetime import datetime
 from getpass import getpass
 from password_strength import PasswordPolicy
 from flask import Flask, request, flash, render_template, redirect, url_for, g
 from flask_bcrypt import Bcrypt
-from home_module.home import home_bp
+from home.views import home_bp
 from flask_migrate import Migrate
 from flask_login import LoginManager, current_user, UserMixin, login_user, logout_user
 from flask_admin import Admin, AdminIndexView
@@ -49,14 +48,12 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-      #  remember_me = True if request.form['remember_me'] else False
         user = User.query.filter_by(email=email).first()
         if user and user.is_active:
             hashed_password = user.password
             is_valid = bcrypt.check_password_hash(hashed_password, password)
             if is_valid and user.is_admin:
-                login_user(user )
-                #g.user = current_user
+                login_user(user)
                 flash('Logged in successfully!', 'success')
                 print('logged in')
                 return redirect(url_for('admin.index'))
@@ -136,7 +133,7 @@ class MyAdminIndexView(AdminIndexView):
 
 
 # Define admin here
-admin = Admin(app, index_view=MyAdminIndexView())
+admin = Admin(app, index_view=MyAdminIndexView(), name='Admin Panel')
 admin.add_view(MyModelView(User, db.session))
 
 if __name__ == '__main__':

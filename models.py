@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
-
+from flask_admin.contrib.sqla import ModelView
 db = SQLAlchemy()
 class User(db.Model, UserMixin):
     __tablename__ = 'users'  # Table name (optional)flask db migrate -m "Initial migration"
@@ -19,5 +19,8 @@ class User(db.Model, UserMixin):
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    def on_model_change(self, form, model, is_created):
+        model.updated_on = datetime.now()  # Update the field with the current datetime
+        return super().on_model_change(form, model, is_created)
     def __repr__(self):
         return f"<User {self.id}: {self.fullname}>"
