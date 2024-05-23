@@ -4,7 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 from home.views import home_bp
 from flask_migrate import Migrate
 from flask_login import LoginManager
-
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
 
 # Define data base here

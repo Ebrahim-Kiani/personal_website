@@ -6,7 +6,7 @@ from flask_login import login_user
 from validate_email import validate_email
 from auth.models import User, db
 from config.settings import app, login
-from .admin import admin
+from config.admin import admin
 
 
 @login.user_loader
