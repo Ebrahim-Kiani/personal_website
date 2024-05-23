@@ -20,7 +20,10 @@ app.config['SECRET_KEY'] = 'mysecret'
 app.config['SECURITY_PASSWORD_HASH'] = 'bcrypt'
 app.config['SECURITY_PASSWORD_SALT'] = b'$2b$12$wqKlYjmOfXPkjfhksfhsk.'  # custom salt
 
+app.config['UPLOAD_FOLDER'] = '..\medias\images\profile'
+
 # Define modules here
+
 app.register_blueprint(home_bp, url_prefix='')
 
 # Define model(s) Migrate here
@@ -29,3 +32,6 @@ migrate = Migrate(app, db)
 # Define login here
 login = LoginManager(app)
 login.login_view = 'login'
+
+
+

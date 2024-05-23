@@ -1,6 +1,10 @@
+import os
 from datetime import datetime
 from flask_login import UserMixin
-from config.settings import db
+from werkzeug.utils import secure_filename
+
+from config.settings import db, app
+
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'  # Table name (optional)flask db migrate -m "Initial migration"
@@ -13,13 +17,14 @@ class User(db.Model, UserMixin):
     DateOfBirth = db.Column(db.DateTime, nullable=True)
     job = db.Column(db.String(50), nullable=True)
     AboutMe = db.Column(db.Text, nullable=True)
+    image1 = db.Column(db.LargeBinary, nullable=True)
+    image2 = db.Column(db.LargeBinary, nullable=True)
     is_admin = db.Column(db.Boolean(), default=False, unique=True, nullable=False)
     is_active = db.Column(db.Boolean(), default=True, nullable=False)
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    def on_model_change(self, form, model, is_created):
-        model.updated_on = datetime.now()  # Update the field with the current datetime
-        return super().on_model_change(form, model, is_created)
+
+
     def __repr__(self):
         return f"<User {self.id}: {self.fullname}>"
