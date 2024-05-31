@@ -1,9 +1,9 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from home.views import home_bp
 from flask_migrate import Migrate
 from flask_login import LoginManager
+
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
 
 # Define data base here
@@ -19,11 +19,11 @@ app.config['SECRET_KEY'] = 'mysecret'
 app.config['SECURITY_PASSWORD_HASH'] = 'bcrypt'
 app.config['SECURITY_PASSWORD_SALT'] = b'$2b$12$wqKlYjmOfXPkjfhksfhsk.'  # custom salt
 
-app.config['UPLOAD_FOLDER'] = '..\medias\images\profile'
+app.config['UPLOAD_FOLDER'] = '..\static\images\profile'
 
-# Define modules here
-
-app.register_blueprint(home_bp, url_prefix='')
+from home.views import home_bp
+# # Define modules here
+app.register_blueprint(home_bp, url_prefix='/')
 
 # Define model(s) Migrate here
 migrate = Migrate(app, db)
@@ -32,5 +32,4 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = 'login'
 
-
-
+from home.models import Skill

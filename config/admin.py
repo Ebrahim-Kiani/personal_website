@@ -1,7 +1,7 @@
 from flask_admin import Admin, form
 from flask_login import current_user
 from config.settings import app, db
-from home.models import Resume, Skill, Project
+from home.models import Resume, Skill, Project, Information, ContactMe
 from auth.models import User
 from flask_admin.contrib.sqla import ModelView
 
@@ -15,22 +15,6 @@ class MultipleImageUploadField(form.FileUploadField):
 
 # Custom view for articles
 class AdminModelView(ModelView):
-    form_overrides = {
-        'image1': MultipleImageUploadField,
-        'image2': MultipleImageUploadField,
-    }
-    form_args = {
-        'image1': {
-            'label': 'Image1',
-            'base_path': 'medias/images/profile',  # Set your desired upload directory
-            'allow_overwrite': False,  # Prevent overwriting existing files
-        },
-        'image2': {
-            'label': 'Image2',
-            'base_path': 'medias/images/profile',  # Set your desired upload directory
-            'allow_overwrite': False,  # Prevent overwriting existing files
-        }
-    }
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.is_admin
@@ -51,30 +35,80 @@ class ProjectModelView(ModelView):
     # Add form_ajax_refs to enable editing of the user_id field
     form_ajax_refs = {
         'user': {
-            'fields': ['fullname'],  # Display the 'name' field of the User model in the search field
+            'fields': ['email'],  # Display the 'name' field of the User model in the search field
         }
     }
+
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.is_admin
 
 
 class SkillsModelView(ModelView):
     form_ajax_refs = {
         'user': {
-            'fields': ['fullname'],  # Display the 'name' field of the User model in the search field
+            'fields': ['email'],  # Display the 'name' field of the User model in the search field
         }
     }
+
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.is_admin
 
 
 class ResumesModelView(ModelView):
     form_ajax_refs = {
         'user': {
-            'fields': ['fullname'],  # Display the 'name' field of the User model in the search field
+            'fields': ['email'],  # Display the 'name' field of the User model in the search field
         }
     }
+
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.is_admin
+
+
+class ContactMeModelView(ModelView):
+
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.is_admin
+
+
+class InformationsModelView(ModelView):
+    form_overrides = {
+        'image1': MultipleImageUploadField,
+        'image2': MultipleImageUploadField,
+        'resume_file': MultipleImageUploadField
+    }
+    form_args = {
+        'resume_file': {
+            'label': 'resume_file',
+            'base_path': 'static/files',  # Set your desired upload directory
+            'allow_overwrite': True,  # Prevent overwriting existing files
+        },
+        'image1': {
+            'label': 'Image1',
+            'base_path': 'static/images/profile',  # Set your desired upload directory
+            'allow_overwrite': False,  # Prevent overwriting existing files
+        },
+        'image2': {
+            'label': 'Image2',
+            'base_path': 'static/images/profile',  # Set your desired upload directory
+            'allow_overwrite': False,  # Prevent overwriting existing files
+        }
+    }
+    form_ajax_refs = {
+        'user': {
+            'fields': ['email'],  # Display the 'name' field of the User model in the search field
+        }
+    }
+
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.is_admin
 
 
 # Define admin here
 admin = Admin(app)
-admin.add_view(AdminModelView(User, db.session, name='User Admin', category='User Administration'))
-admin.add_view(ResumesModelView(Resume, db.session, name="Resume", category="User Administration"))
-admin.add_view(SkillsModelView(Skill, db.session, name="Skill", category="User Administration"))
-admin.add_view(ProjectModelView(Project, db.session, name="Project", category="User Administration"))
+admin.add_view(AdminModelView(User, db.session, name='User Admin'))
+admin.add_view(ResumesModelView(Resume, db.session, name="Resume"))
+admin.add_view(SkillsModelView(Skill, db.session, name="Skill"))
+admin.add_view(ProjectModelView(Project, db.session, name="Project"))
+admin.add_view(ContactMeModelView(ContactMe, db.session, name="ContactMe"))
+admin.add_view(InformationsModelView(Information, db.session, name="Information"))
