@@ -19,6 +19,7 @@ def home():
     image2 = informations.image2
     image1_url = url_for('static', filename='images/profile/' + image1)
     image2_url = url_for('static', filename='images/profile/' + image2)
+
     if request.method == 'POST':
 
         name = request.form.get('name')

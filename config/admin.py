@@ -1,3 +1,4 @@
+from flask import url_for
 from flask_admin import Admin, form
 from flask_login import current_user
 from config.settings import app, db
@@ -28,7 +29,7 @@ class ProjectModelView(ModelView):
     form_args = {
         'image': {
             'label': 'Image',
-            'base_path': 'medias/images/profile',  # Set your desired upload directory
+            'base_path': 'static/images/projects',  # Set your desired upload directory
             'allow_overwrite': False,  # Prevent overwriting existing files
         }
     }
@@ -37,6 +38,20 @@ class ProjectModelView(ModelView):
         'user': {
             'fields': ['email'],  # Display the 'name' field of the User model in the search field
         }
+    }
+
+    def _list_thumbnail(view, context, Project, name):
+        if not Project.image:
+            return ''
+
+        # Get the URL of the image using url_for
+        image_url = url_for('static', filename='images/projects/' + Project.image)
+
+        return image_url
+
+    # Register the column formatter for the 'image' column
+    column_formatters = {
+        'image': _list_thumbnail,
     }
 
     def is_accessible(self):

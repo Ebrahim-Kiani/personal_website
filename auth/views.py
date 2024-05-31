@@ -26,7 +26,7 @@ def login():
             if is_valid and user.is_admin:
                 login_user(user)
                 flash('Logged in successfully!', 'success')
-                print('logged in')
+
                 return redirect(url_for('admin.index'))
 
         else:
