@@ -1,4 +1,5 @@
 import os
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -7,9 +8,10 @@ from flask_login import LoginManager
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
 
 # Define data base here
-
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, '../mydatabase.db')
+#name : value
+DATABASE_URL : mysql://flask531_william:sSdif8PXIzY4@services.irn6.chabokan.net:14473/flask531_william
+basedir = os.getenv('DATABASE_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql:///' + os.path.join(basedir, '../mydatabase.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy()
 db.init_app(app)  # Initialize SQLAlchemy
